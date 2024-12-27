@@ -1,6 +1,6 @@
 "use client";
 
-import Select from "@/components/Select/Select";
+import SelectCard from "@/components/Select/SelectCard";
 import StartGame from "@/components/StartGame/StartGame";
 import { useState } from "react";
 
@@ -15,7 +15,7 @@ export default function Home() {
         </div>
       ) : (
         <div className="z-10">
-          <Select />
+          <SelectCard />
         </div>
       )}
     </div>
