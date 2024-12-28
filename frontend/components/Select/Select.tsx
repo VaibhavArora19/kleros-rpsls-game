@@ -1,53 +1,59 @@
+"use client";
+
 import { Button } from "../ui/button";
 import { useState } from "react";
 import { useWriteContact } from "@/hooks/contract/useWriteContract";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
 import { getAddress } from "@/config/ethers";
 import { ethers } from "ethers";
-import Options from "./Options";
-import { Move } from "@/types/Move";
-import { useManageSmartContract } from "@/hooks/server/contract";
+import Options from "../Options/Options";
+import { Move } from "@/constants/index";
+import { Loader2 } from "lucide-react";
+import Player2Input from "./Player2Input";
 
 const Select = () => {
   const { startGame } = useWriteContact();
   const [currentSelection, setCurrentSelection] = useState<Move | null>(null);
   const [player2Address, setPlayer2Address] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const startGameHandler = async () => {
-    const userAddress = await getAddress();
+    try {
+      const userAddress = await getAddress();
 
-    if (player2Address.length !== 42 || !currentSelection || ethers.getAddress(player2Address) === ethers.getAddress(userAddress)) {
-      return;
+      if (player2Address.length !== 42 || !currentSelection || ethers.getAddress(player2Address) === ethers.getAddress(userAddress)) {
+        return;
+      }
+      setIsLoading(true);
+
+      //TODOD: Figure out how to store the number and the contract address of the current game
+      await startGame(12, player2Address);
+
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      console.error("error: ", error);
     }
-
-    //TODOD: Figure out how to store the number and the contract address of the current game
-    await startGame(12, player2Address);
   };
 
   return (
     <div className="text-center mt-10">
       <h1 className="text-3xl font-semibold">Select your choice 🎮</h1>
       <Options currentSelection={currentSelection} setCurrentSelection={setCurrentSelection} />
-      <div className="mt-16 m-auto grid w-[70%] items-center gap-1.5">
-        <Label htmlFor="Player 2 Address" className="text-left text-lg pl-2">
-          Player 2
-        </Label>
-        <Input
-          type="text"
-          placeholder="Enter player 2 address"
-          className="h-[4.4rem] text-lg"
-          value={player2Address}
-          onChange={(e) => setPlayer2Address(e.target.value)}
-        />
-      </div>
-      <Button
-        className="mt-12 w-[15rem] h-[3.3rem] text-lg mb-8"
-        disabled={currentSelection && player2Address.length === 42 ? false : true}
-        onClick={startGameHandler}
-      >
-        Select
-      </Button>
+      <Player2Input player2Address={player2Address} setPlayer2Address={setPlayer2Address} />
+      {isLoading ? (
+        <Button disabled className="mt-12 w-[15rem] h-[3.8rem] text-xl mb-8">
+          <Loader2 className="animate-spin" />
+          Starting game...
+        </Button>
+      ) : (
+        <Button
+          className="mt-12 w-[15rem] h-[3.8rem] text-xl mb-8"
+          disabled={currentSelection && player2Address.length === 42 ? false : true}
+          onClick={startGameHandler}
+        >
+          Select
+        </Button>
+      )}
     </div>
   );
 };

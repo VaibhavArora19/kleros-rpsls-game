@@ -1,12 +1,12 @@
 import { getSigner } from "@/config/ethers";
 import { CONTRACT_ADDRESS } from "@/constants";
 import { ABI, BYTECODE } from "@/constants/abi";
-import { Move } from "@/types/Move";
+import { Move } from "@/constants/index";
 import { ethers, ContractFactory } from "ethers";
-import { useManageSmartContract } from "../server/contract";
+import { useSaveSmartContractAddress } from "../server/contract";
 
 export const useWriteContact = () => {
-  const { createSmartContract } = useManageSmartContract();
+  const { mutateAsync } = useSaveSmartContractAddress();
 
   const startGame = async (salt: number, player2: string): Promise<string> => {
     const signer = await getSigner();
@@ -21,7 +21,7 @@ export const useWriteContact = () => {
 
     const contractAddress = await tx.getAddress();
 
-    await createSmartContract(contractAddress);
+    await mutateAsync(contractAddress);
 
     return contractAddress;
   };

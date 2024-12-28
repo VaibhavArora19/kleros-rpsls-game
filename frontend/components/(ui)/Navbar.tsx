@@ -4,7 +4,7 @@ function Navbar() {
   return (
     <div className="flex justify-between px-8 py-4">
       <div className="text-2xl font-semibold">
-        <h1>Rock paper scissor</h1>
+        <h1>RPSLS Game</h1>
       </div>
       <div>
         <appkit-button />

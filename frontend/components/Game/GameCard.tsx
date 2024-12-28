@@ -1,10 +1,10 @@
 import { useState } from "react";
-import Options from "../Select/Options";
+import Options from "../Options/Options";
 import { Card } from "../ui/card";
-import { GoTrophy } from "react-icons/go";
 import { Button } from "../ui/button";
 import { useWriteContact } from "@/hooks/contract/useWriteContract";
-import { Move } from "@/types/Move";
+import { Move } from "@/constants/index";
+import GameTitle from "./GameTitle";
 
 const GameCard = () => {
   const [currentSelection, setCurrentSelection] = useState<Move | null>(null);
@@ -22,17 +22,7 @@ const GameCard = () => {
 
   return (
     <Card className="w-[27%] m-auto mt-[15vh] pb-12">
-      <div className="flex justify-around mt-4 gap-24">
-        <div>
-          <h2 className="text-2xl">Player 1</h2>
-        </div>
-        <div className="text-xl">
-          <GoTrophy className="mt-2 text-4xl text-orange-500" />
-        </div>
-        <div>
-          <h2 className="text-2xl">Player 2</h2>
-        </div>
-      </div>
+      <GameTitle />
       <div className="flex justify-around mt-16 gap-24">
         <div className="w-[6rem] h-[6rem] rounded-lg bg-white"></div>
         <h1 className="font-medium text-3xl pt-8">VS</h1>

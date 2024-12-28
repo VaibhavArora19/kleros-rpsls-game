@@ -3,7 +3,7 @@ import { FaRegHandPaper } from "react-icons/fa";
 import { FaRegHandScissors } from "react-icons/fa";
 import { FaRegHandLizard } from "react-icons/fa";
 import { FaRegHandSpock } from "react-icons/fa";
-import { Move } from "@/types/Move";
+import { Move } from "@/constants/index";
 
 export type Option = {
   name: string;
@@ -16,10 +16,10 @@ type TProps = {
   setCurrentSelection: React.Dispatch<React.SetStateAction<Move | null>>;
 };
 
-const options: Option[] = [
+export const options: Option[] = [
   {
     name: "Rock",
-    icon: () => <FaRegHandRock className="text-3xl text-center " />,
+    icon: () => <FaRegHandRock className="text-3xl text-center" />,
     move: Move.Rock,
   },
   {
@@ -51,8 +51,8 @@ const Options = ({ currentSelection, setCurrentSelection }: TProps) => {
         return (
           <div
             className={`${
-              currentSelection === option.move ? "border-gray-400" : ""
-            } hover:border-gray-400  border-[4px] rounded-sm w-24 h-24 flex justify-center flex-col text-center items-center cursor-pointer`}
+              currentSelection === option.move ? "border-gray-700" : ""
+            } hover:border-gray-700  border-[2px] rounded-sm w-24 h-24 flex justify-center flex-col text-center items-center cursor-pointer`}
             key={option.name}
             onClick={() => setCurrentSelection(option.move)}
           >
