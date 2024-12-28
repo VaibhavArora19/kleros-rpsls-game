@@ -9,7 +9,7 @@ type TProps = {
 const Player2Input = ({ player2Address, setPlayer2Address }: TProps) => {
   return (
     <div className="mt-16 w-[70%] m-auto">
-      <div className="content-left items-start w-[10%] ml-2">
+      <div className="content-left items-start w-[17%] ml-2">
         <Label htmlFor="Player 2 Address" className="text-lg ">
           Player 2
         </Label>

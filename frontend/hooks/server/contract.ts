@@ -9,13 +9,10 @@ export const useGetSmartContractAddress = () => {
 
       console.log("Smart contract: ", data);
 
-      if (data.status !== 200) {
-        throw new Error(data.message);
-      }
-
-      return data.contract;
-    } catch (error) {
+      return data.contractAddress;
+    } catch (error: any) {
       console.error("error getting smart contract: ", error);
+      //   throw new Error(error.message);
     }
   };
 
@@ -23,6 +20,7 @@ export const useGetSmartContractAddress = () => {
     queryKey: [SERVER.GET_CONTRACT_ADDRESS],
     queryFn: getSmartContractAddress,
     refetchOnWindowFocus: false,
+    retry: 0,
   });
 };
 
@@ -42,5 +40,22 @@ export const useSaveSmartContractAddress = () => {
   return useMutation({
     mutationKey: [SERVER.SAVE_CONTRACT_ADDRESS],
     mutationFn: saveSmartContractAddress,
+  });
+};
+
+export const useDeleteSmartContractAddress = () => {
+  const useDeleteSmartContractAddress = async () => {
+    try {
+      const { data } = await axios.delete("/api/contract-address");
+
+      console.log("Deleted smart contract: ", data);
+    } catch (error) {
+      console.error("error deleting smart contract: ", error);
+    }
+  };
+
+  return useMutation({
+    mutationKey: [SERVER.DELETE_CONTRACT_ADDRESS],
+    mutationFn: useDeleteSmartContractAddress,
   });
 };

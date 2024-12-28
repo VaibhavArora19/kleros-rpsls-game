@@ -1,22 +1,49 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Options from "../Options/Options";
 import { Card } from "../ui/card";
 import { Button } from "../ui/button";
 import { useWriteContact } from "@/hooks/contract/useWriteContract";
 import { Move } from "@/constants/index";
 import GameTitle from "./GameTitle";
+import { useAppKitAccount } from "@reown/appkit/react";
+import { useReadContract } from "@/hooks/contract/useReadContract";
+import { Loader2 } from "lucide-react";
 
-const GameCard = () => {
+type TProps = {
+  contractAddress: string;
+};
+
+const GameCard = (props: TProps) => {
+  const { address } = useAppKitAccount();
   const [currentSelection, setCurrentSelection] = useState<Move | null>(null);
   const { playMove } = useWriteContact();
+  const { checkPlayerValidation } = useReadContract();
+  const [message, setMessage] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    async function getStatus() {
+      if (!address) return;
+
+      const status = await checkPlayerValidation(props.contractAddress, address);
+
+      console.log("status is", status);
+      setMessage(status?.message as string);
+    }
+
+    getStatus();
+  }, [address]);
 
   const playMoveHandler = async () => {
     if (!currentSelection) return;
+    setIsLoading(true);
 
     try {
-      await playMove(currentSelection as Move);
+      await playMove(currentSelection as Move, props.contractAddress);
+      setIsLoading(false);
     } catch (error) {
       console.error("error: ", error);
+      setIsLoading(false);
     }
   };
 
@@ -33,9 +60,12 @@ const GameCard = () => {
         <Options currentSelection={currentSelection} setCurrentSelection={setCurrentSelection} />
       </div>
       <div className="flex justify-center items-center mt-12">
-        <Button className="text-lg p-6" onClick={playMoveHandler}>
-          Play Move
-        </Button>
+        {
+          <Button className="text-lg p-6" disabled={isLoading} onClick={playMoveHandler}>
+            {isLoading && <Loader2 className="animate-spin" />}
+            {isLoading ? "Submitting move..." : message ? message : "..."}
+          </Button>
+        }
       </div>
     </Card>
   );

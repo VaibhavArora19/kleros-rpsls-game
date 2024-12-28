@@ -6,7 +6,7 @@ import { useGetSmartContractAddress } from "@/hooks/server/contract";
 import { Loader2 } from "lucide-react";
 
 const Play = () => {
-  const { data, isLoading, error } = useGetSmartContractAddress();
+  const { data, isLoading } = useGetSmartContractAddress();
 
   if (isLoading) {
     return (
@@ -16,7 +16,7 @@ const Play = () => {
     );
   }
 
-  return <div>{error ? <SelectCard /> : <GameCard />}</div>;
+  return <div>{!data ? <SelectCard /> : <GameCard contractAddress={data} />}</div>;
 };
 
 export default Play;
