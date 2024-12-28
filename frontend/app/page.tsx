@@ -1,21 +1,33 @@
 "use client";
 
+import GameCard from "@/components/Game/GameCard";
 import SelectCard from "@/components/Select/SelectCard";
 import StartGame from "@/components/StartGame/StartGame";
 import { useState } from "react";
 
 export default function Home() {
-  const [isGameStarted, setIsGameStarted] = useState(false);
+  const [startGame, setStartGame] = useState(false);
+
+  //this determines that game already begun and player 1 has played their move
+  const [isGameInProgress, setIsGameInProgress] = useState(false);
 
   return (
     <div>
-      {!isGameStarted ? (
-        <div className={`transition-opacity duration-500`}>
-          <StartGame setIsGameStarted={setIsGameStarted} />
+      {isGameInProgress ? (
+        <div>
+          <GameCard />
         </div>
       ) : (
-        <div className="z-10">
-          <SelectCard />
+        <div>
+          {!startGame ? (
+            <div className={`transition-opacity duration-500`}>
+              <StartGame setStartGame={setStartGame} />
+            </div>
+          ) : (
+            <div className="z-10">
+              <SelectCard />
+            </div>
+          )}
         </div>
       )}
     </div>

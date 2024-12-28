@@ -3,8 +3,11 @@ import { CONTRACT_ADDRESS } from "@/constants";
 import { ABI, BYTECODE } from "@/constants/abi";
 import { Move } from "@/types/Move";
 import { ethers, ContractFactory } from "ethers";
+import { useManageSmartContract } from "../server/contract";
 
 export const useWriteContact = () => {
+  const { createSmartContract } = useManageSmartContract();
+
   const startGame = async (salt: number, player2: string): Promise<string> => {
     const signer = await getSigner();
 
@@ -17,6 +20,8 @@ export const useWriteContact = () => {
     const tx = await (await contract.deploy(player1Hash, player2, { value: ethers.parseEther("0.001") })).waitForDeployment();
 
     const contractAddress = await tx.getAddress();
+
+    await createSmartContract(contractAddress);
 
     return contractAddress;
   };

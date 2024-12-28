@@ -8,3 +8,11 @@ export const getSigner = async () => {
 
   return signer;
 };
+
+export const getAddress = async () => {
+  const signer = await getSigner();
+
+  const address = await signer.getAddress();
+
+  return address;
+};
