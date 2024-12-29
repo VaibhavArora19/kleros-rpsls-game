@@ -8,6 +8,10 @@ import GameTitle from "./GameTitle";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { useReadContract } from "@/hooks/contract/useReadContract";
 import { Loader2 } from "lucide-react";
+import { toast, ToastContainer } from "react-toastify";
+import { FaQuestion } from "react-icons/fa";
+import { useDeleteSmartContractAddress } from "@/hooks/server/contract";
+import { TiTick } from "react-icons/ti";
 
 type TProps = {
   contractAddress: string;
@@ -18,6 +22,7 @@ export enum Status {
   PLAYER_2_MOVE,
   PLAYER_1_TIMEOUT,
   PLAYER_2_TIMEOUT,
+  GAME_ENDED,
 }
 
 const GameCard = (props: TProps) => {
@@ -28,14 +33,17 @@ const GameCard = (props: TProps) => {
   const [message, setMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [gameStatus, setGameStatus] = useState<Status | null>(null);
+  const { mutateAsync } = useDeleteSmartContractAddress();
 
   useEffect(() => {
     async function getStatus() {
       if (!address) return;
 
-      const { status, message } = (await checkStatus(props.contractAddress, address)) as any;
+      const { status, message } = (await checkStatus(props.contractAddress)) as { status: Status; message: String };
 
-      if (!status || !message) return;
+      console.log("ssssss", status, message);
+
+      if (status === undefined || status === null || !message) return;
 
       console.log("status is", status);
       setGameStatus(status);
@@ -52,19 +60,30 @@ const GameCard = (props: TProps) => {
       if (gameStatus === Status.PLAYER_2_MOVE) {
         if (!currentSelection) return;
         await playMove(currentSelection as Move, props.contractAddress);
+        toast.success("Move submitted successfully!");
       } else if (gameStatus === Status.PLAYER_1_MOVE) {
-        //TODO: figure out how to get the salt
-        if (!currentSelection) return;
-        await solve(currentSelection as Move, 12, props.contractAddress);
+        if (!currentSelection) {
+          toast.error("Please select a move!");
+          setIsLoading(false);
+          return;
+        }
+        await solve(currentSelection as Move, props.contractAddress);
+        toast.success("Move revealed successfully!");
       } else if (gameStatus === Status.PLAYER_1_TIMEOUT) {
         await timeout("player1", props.contractAddress);
+        toast.success("Player 1 Timed out!");
       } else if (gameStatus === Status.PLAYER_2_TIMEOUT) {
         await timeout("player2", props.contractAddress);
+        toast.success("Player 2 Timed out!");
+      } else if (gameStatus === Status.GAME_ENDED) {
+        await mutateAsync();
+        toast.success("Game ended!");
       }
       setIsLoading(false);
     } catch (error) {
       console.error("error: ", error);
       setIsLoading(false);
+      toast.error("Something went wrong!");
     }
   };
 
@@ -72,9 +91,21 @@ const GameCard = (props: TProps) => {
     <Card className="w-[40rem] m-auto mt-[10vh] pb-12">
       <GameTitle />
       <div className="flex justify-around mt-16 gap-24">
-        <div className="w-[6rem] h-[6rem] rounded-lg bg-white"></div>
+        <div className="w-[6rem] h-[6rem] rounded-lg bg-gray-300">
+          {gameStatus !== Status.GAME_ENDED ? (
+            <FaQuestion className="text-center flex justify-center m-auto mt-[2.2rem] text-gray-800 text-xl" />
+          ) : (
+            <TiTick className="text-center flex justify-center m-auto mt-[2.2rem] text-green-600 text-xl" />
+          )}
+        </div>
         <h1 className="font-medium text-3xl pt-8">VS</h1>
-        <div className="w-[6rem] h-[6rem] rounded-lg bg-white"></div>
+        <div className="w-[6rem] h-[6rem] rounded-lg bg-gray-300">
+          {gameStatus !== Status.PLAYER_2_MOVE && gameStatus !== Status.PLAYER_2_TIMEOUT ? (
+            <TiTick className="text-center flex justify-center m-auto mt-[2.5rem] text-green-600 text-xl" />
+          ) : (
+            <FaQuestion className="text-center flex justify-center m-auto mt-[2.2rem] text-xl" />
+          )}
+        </div>
       </div>
       <div className="mt-24">
         <h1 className="text-2xl font-semibold text-center">Make your choice</h1>
@@ -88,6 +119,7 @@ const GameCard = (props: TProps) => {
           </Button>
         }
       </div>
+      <ToastContainer />
     </Card>
   );
 };

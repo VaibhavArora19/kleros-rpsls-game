@@ -10,9 +10,8 @@ export const useGetSmartContractAddress = () => {
       console.log("Smart contract: ", data);
 
       return data.contractAddress;
-    } catch (error: any) {
+    } catch (error) {
       console.error("error getting smart contract: ", error);
-      //   throw new Error(error.message);
     }
   };
 
@@ -25,10 +24,11 @@ export const useGetSmartContractAddress = () => {
 };
 
 export const useSaveSmartContractAddress = () => {
-  const saveSmartContractAddress = async (contractAddress: string) => {
+  const saveSmartContractAddress = async ({ contractAddress, encryptedNumber }: { contractAddress: string; encryptedNumber: string }) => {
     try {
       const { data } = await axios.post("/api/contract-address", {
         contractAddress,
+        encryptedNumber,
       });
 
       console.log("Created smart contract: ", data);

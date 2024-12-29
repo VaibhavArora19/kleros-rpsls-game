@@ -9,6 +9,7 @@ import Options from "../Options/Options";
 import { Move } from "@/constants/index";
 import { Loader2 } from "lucide-react";
 import Player2Input from "./Player2Input";
+import { ToastContainer, toast } from "react-toastify";
 
 const Select = () => {
   const { startGame } = useWriteContact();
@@ -25,10 +26,14 @@ const Select = () => {
       }
       setIsLoading(true);
 
-      //TODOD: Figure out how to store the number and the contract address of the current game
-      await startGame(12, player2Address);
+      //* A random number is generated to be used as the salt
+      const number = Math.floor(Math.random() * 100000);
+
+      await startGame(number, userAddress, player2Address);
 
       setIsLoading(false);
+
+      toast.success("Move submitted successfully!");
     } catch (error) {
       setIsLoading(false);
       console.error("error: ", error);
@@ -54,6 +59,7 @@ const Select = () => {
           Select
         </Button>
       )}
+      <ToastContainer />
     </div>
   );
 };

@@ -2,53 +2,75 @@ import { getSigner } from "@/config/ethers";
 import { ABI, BYTECODE } from "@/constants/abi";
 import { Move } from "@/constants/index";
 import { ethers, ContractFactory } from "ethers";
-import { useDeleteSmartContractAddress, useSaveSmartContractAddress } from "../server/contract";
+import { useSaveSmartContractAddress } from "../server/contract";
+import { decryptNumber, encryptNumber } from "@/lib/encrypt";
+import { useGetEncryptedNumber } from "../server/encrypted-number";
 
 export const useWriteContact = () => {
   const { mutateAsync } = useSaveSmartContractAddress();
-  const { mutateAsync: deleteContract } = useDeleteSmartContractAddress();
+  const { mutateAsync: getEncryptedNumber } = useGetEncryptedNumber();
 
-  const startGame = async (salt: number, player2: string): Promise<string> => {
-    const signer = await getSigner();
+  const startGame = async (salt: number, player1: string, player2: string): Promise<string> => {
+    try {
+      const signer = await getSigner();
 
-    const player1Address = await signer.getAddress();
+      const player1Address = await signer.getAddress();
 
-    const player1Hash = ethers.solidityPackedKeccak256(["address", "uint256"], [player1Address, salt]);
+      const encryptedNumber = await encryptNumber(player1, salt);
 
-    const contract = new ContractFactory(ABI, BYTECODE, signer);
+      const player1Hash = ethers.solidityPackedKeccak256(["address", "uint256"], [player1Address, salt]);
 
-    const tx = await (await contract.deploy(player1Hash, player2, { value: ethers.parseEther("0.001") })).waitForDeployment();
+      const contract = new ContractFactory(ABI, BYTECODE, signer);
 
-    const contractAddress = await tx.getAddress();
+      const tx = await (await contract.deploy(player1Hash, player2, { value: ethers.parseEther("0.0001"), gasLimit: "900000" })).waitForDeployment();
 
-    await mutateAsync(contractAddress);
+      const contractAddress = await tx.getAddress();
 
-    return contractAddress;
+      await mutateAsync({
+        contractAddress,
+        encryptedNumber,
+      });
+
+      return contractAddress;
+    } catch (error) {
+      console.log("error: ", error);
+      throw new Error("Error starting game");
+    }
   };
 
   const playMove = async (move: Move, contractAddress: string) => {
-    if (!contractAddress) return;
-
-    const signer = await getSigner();
-
-    const contract = new ethers.Contract(contractAddress, ABI, signer);
-
-    const tx = await contract.play(move, { value: ethers.parseEther("0.001") });
-
-    await tx.wait();
-  };
-
-  const solve = async (move: Move, salt: number, contractAddress: string) => {
     try {
+      if (!contractAddress) return;
+
       const signer = await getSigner();
 
       const contract = new ethers.Contract(contractAddress, ABI, signer);
 
-      await contract.solve(move, salt);
+      const tx = await contract.play(move, { value: ethers.parseEther("0.0001"), gasLimit: "300000" });
 
-      await deleteContract();
+      await tx.wait();
+    } catch (error) {
+      console.log("error: ", error);
+      throw new Error("Error starting game");
+    }
+  };
+
+  const solve = async (move: Move, contractAddress: string) => {
+    try {
+      const encryptedNumber = await getEncryptedNumber();
+
+      const signer = await getSigner();
+
+      const address = await signer.getAddress();
+
+      const decryptedNumber = await decryptNumber(address, encryptedNumber);
+
+      const contract = new ethers.Contract(contractAddress, ABI, signer);
+
+      await contract.solve(move, decryptedNumber, { gasLimit: "300000" });
     } catch (error) {
       console.error("error: ", error);
+      throw new Error("Error solving game");
     }
   };
 
@@ -59,14 +81,13 @@ export const useWriteContact = () => {
       const contract = new ethers.Contract(contractAddress, ABI, signer);
 
       if (player === "player1") {
-        await contract.j1Timeout();
+        await contract.j1Timeout({ gasLimit: "300000" });
       } else {
-        await contract.j2Timeout();
+        await contract.j2Timeout({ gasLimit: "300000" });
       }
-
-      await deleteContract();
     } catch (error) {
       console.error("error: ", error);
+      throw new Error("Error timing out");
     }
   };
 

@@ -16,7 +16,7 @@ const LandingPage = () => {
           );
         })}
       </div>
-      <div className="w-[25%] m-auto mt-8">
+      <div className="w-[45rem] m-auto mt-8">
         <h1 className="text-7xl font-bold">Rock Paper Scissors Lizard Spock</h1>
         <p className="mt-8 text-2xl text-gray-500">
           Challenge your friends in an exciting game in this expanded version with more choices and strategic depth. Choose from Rock, Paper,
