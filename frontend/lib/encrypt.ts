@@ -18,13 +18,10 @@ export const encryptNumber = async (userAddress: string, number: number) => {
     "utf-8"
   );
 
-  console.log("encryptedValue", buf);
-
   return "0x" + buf.toString("hex");
 };
 
 export const decryptNumber = async (userAddress: string, encryptedMessage: string) => {
-  console.log("user address is", userAddress);
   //@ts-expect-error metamask might not be installed
   const decryptedNumber = await window.ethereum.request({
     method: "eth_decrypt",

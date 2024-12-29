@@ -27,7 +27,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
   await redis.set("EncryptedNumber", encryptedNumber);
 
-  console.log("successfully set");
   return Response.json({ status: 200, message: "Smart contract address saved" });
 }
 

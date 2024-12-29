@@ -7,8 +7,6 @@ export const useGetSmartContractAddress = () => {
     try {
       const { data } = await axios.get("/api/contract-address");
 
-      console.log("Smart contract: ", data);
-
       return data.contractAddress;
     } catch (error) {
       console.error("error getting smart contract: ", error);
@@ -30,8 +28,6 @@ export const useSaveSmartContractAddress = () => {
         contractAddress,
         encryptedNumber,
       });
-
-      console.log("Created smart contract: ", data);
     } catch (error) {
       console.error("error creating smart contract: ", error);
     }
@@ -47,8 +43,6 @@ export const useDeleteSmartContractAddress = () => {
   const useDeleteSmartContractAddress = async () => {
     try {
       const { data } = await axios.delete("/api/contract-address");
-
-      console.log("Deleted smart contract: ", data);
     } catch (error) {
       console.error("error deleting smart contract: ", error);
     }

@@ -29,7 +29,7 @@ const Select = () => {
       //* A random number is generated to be used as the salt
       const number = Math.floor(Math.random() * 100000);
 
-      await startGame(number, userAddress, player2Address);
+      await startGame(number, currentSelection, player2Address);
 
       setIsLoading(false);
 

@@ -10,15 +10,15 @@ export const useWriteContact = () => {
   const { mutateAsync } = useSaveSmartContractAddress();
   const { mutateAsync: getEncryptedNumber } = useGetEncryptedNumber();
 
-  const startGame = async (salt: number, player1: string, player2: string): Promise<string> => {
+  const startGame = async (salt: number, move: Move, player2: string): Promise<string> => {
     try {
       const signer = await getSigner();
 
       const player1Address = await signer.getAddress();
 
-      const encryptedNumber = await encryptNumber(player1, salt);
+      const encryptedNumber = await encryptNumber(player1Address, salt);
 
-      const player1Hash = ethers.solidityPackedKeccak256(["address", "uint256"], [player1Address, salt]);
+      const player1Hash = ethers.solidityPackedKeccak256(["uint8", "uint256"], [move, salt]);
 
       const contract = new ContractFactory(ABI, BYTECODE, signer);
 

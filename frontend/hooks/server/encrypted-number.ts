@@ -7,8 +7,6 @@ export const useGetEncryptedNumber = () => {
     try {
       const { data } = await axios.get("/api/encrypted-number");
 
-      console.log("Encrypted number: ", data);
-
       return data.encryptedNumber;
     } catch (error) {
       console.error("error getting encrypted number: ", error);

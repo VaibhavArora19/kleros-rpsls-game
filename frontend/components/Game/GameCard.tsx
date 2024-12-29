@@ -41,11 +41,8 @@ const GameCard = (props: TProps) => {
 
       const { status, message } = (await checkStatus(props.contractAddress)) as { status: Status; message: String };
 
-      console.log("ssssss", status, message);
-
       if (status === undefined || status === null || !message) return;
 
-      console.log("status is", status);
       setGameStatus(status);
       setMessage(message as string);
     }
@@ -57,28 +54,41 @@ const GameCard = (props: TProps) => {
     setIsLoading(true);
 
     try {
-      if (gameStatus === Status.PLAYER_2_MOVE) {
-        if (!currentSelection) return;
-        await playMove(currentSelection as Move, props.contractAddress);
-        toast.success("Move submitted successfully!");
-      } else if (gameStatus === Status.PLAYER_1_MOVE) {
-        if (!currentSelection) {
-          toast.error("Please select a move!");
-          setIsLoading(false);
-          return;
-        }
-        await solve(currentSelection as Move, props.contractAddress);
-        toast.success("Move revealed successfully!");
-      } else if (gameStatus === Status.PLAYER_1_TIMEOUT) {
-        await timeout("player1", props.contractAddress);
-        toast.success("Player 1 Timed out!");
-      } else if (gameStatus === Status.PLAYER_2_TIMEOUT) {
-        await timeout("player2", props.contractAddress);
-        toast.success("Player 2 Timed out!");
-      } else if (gameStatus === Status.GAME_ENDED) {
-        await mutateAsync();
-        toast.success("Game ended!");
+      switch (gameStatus) {
+        case Status.PLAYER_2_MOVE:
+          if (!currentSelection) break;
+          await playMove(currentSelection as Move, props.contractAddress);
+          toast.success("Move submitted successfully!");
+          break;
+
+        case Status.PLAYER_1_MOVE:
+          if (!currentSelection) {
+            toast.error("Please select a move!");
+            setIsLoading(false);
+            break;
+          }
+          await solve(currentSelection as Move, props.contractAddress);
+          toast.success("Move revealed successfully!");
+
+          break;
+
+        case Status.PLAYER_1_TIMEOUT:
+          await timeout("player1", props.contractAddress);
+          toast.success("Player 1 Timed out!");
+
+          break;
+
+        case Status.PLAYER_2_TIMEOUT:
+          await timeout("player2", props.contractAddress);
+          toast.success("Player 2 Timed out!");
+
+          break;
+
+        case Status.GAME_ENDED:
+          await mutateAsync();
+          toast.success("Game ended!");
       }
+
       setIsLoading(false);
     } catch (error) {
       console.error("error: ", error);
