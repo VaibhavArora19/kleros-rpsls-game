@@ -46,13 +46,13 @@ export const options: Option[] = [
 
 const Options = ({ currentSelection, setCurrentSelection }: TProps) => {
   return (
-    <div className="flex justify-center flex-wrap items-center content-center mt-16 gap-8">
+    <div className="flex justify-center flex-wrap items-center content-center mt-12 gap-8">
       {options.map((option) => {
         return (
           <div
             className={`${
               currentSelection === option.move ? "border-gray-700" : ""
-            } hover:border-gray-700  border-[2px] rounded-sm w-24 h-24 flex justify-center flex-col text-center items-center cursor-pointer`}
+            } hover:border-gray-700  border-[2px] rounded-sm w-20 h-20 flex justify-center flex-col text-center items-center cursor-pointer`}
             key={option.name}
             onClick={() => setCurrentSelection(option.move)}
           >

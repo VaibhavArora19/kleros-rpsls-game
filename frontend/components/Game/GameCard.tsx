@@ -101,9 +101,9 @@ const GameCard = (props: TProps) => {
   };
 
   return (
-    <Card className="w-[40rem] m-auto mt-[10vh] pb-12">
+    <Card className="w-[40rem] m-auto mt-[9vh] pb-12">
       <GameTitle />
-      <div className="flex justify-around mt-16 gap-24">
+      <div className="flex justify-around mt-12 gap-24">
         <div className="w-[6rem] h-[6rem] rounded-lg bg-gray-300">
           {gameStatus !== Status.GAME_ENDED ? (
             <FaQuestion className="text-center flex justify-center m-auto mt-[2.2rem] text-gray-800 text-xl" />
@@ -120,7 +120,7 @@ const GameCard = (props: TProps) => {
           )}
         </div>
       </div>
-      <div className="mt-24">
+      <div className="mt-12">
         <h1 className="text-2xl font-semibold text-center">Make your choice</h1>
         <Options currentSelection={currentSelection} setCurrentSelection={setCurrentSelection} />
       </div>

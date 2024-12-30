@@ -3,7 +3,7 @@ import Select from "./Select";
 
 const SelectCard = () => {
   return (
-    <Card className="w-[40rem] m-auto mt-[10vh]">
+    <Card className="w-[40rem] m-auto mt-[9vh]">
       <Select />
     </Card>
   );

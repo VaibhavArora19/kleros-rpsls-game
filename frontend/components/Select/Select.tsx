@@ -42,7 +42,7 @@ const Select = () => {
 
   return (
     <div className="text-center mt-10">
-      <h1 className="text-3xl font-semibold">Select your choice 🎮</h1>
+      <h1 className="text-2xl font-semibold">Select your choice 🎮</h1>
       <Options currentSelection={currentSelection} setCurrentSelection={setCurrentSelection} />
       <Player2Input player2Address={player2Address} setPlayer2Address={setPlayer2Address} />
       {isLoading ? (
@@ -52,7 +52,7 @@ const Select = () => {
         </Button>
       ) : (
         <Button
-          className="mt-12 w-[15rem] h-[3.8rem] text-xl mb-8"
+          className="mt-12 w-[15rem] h-[3.1rem] text-xl mb-8"
           disabled={currentSelection && player2Address.length === 42 ? false : true}
           onClick={startGameHandler}
         >
