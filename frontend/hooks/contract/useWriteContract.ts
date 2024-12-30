@@ -67,7 +67,9 @@ export const useWriteContact = () => {
 
       const contract = new ethers.Contract(contractAddress, ABI, signer);
 
-      await contract.solve(move, decryptedNumber, { gasLimit: "300000" });
+      const tx = await contract.solve(move, decryptedNumber, { gasLimit: "300000" });
+
+      await tx.wait();
     } catch (error) {
       console.error("error: ", error);
       throw new Error("Error solving game");
@@ -81,9 +83,13 @@ export const useWriteContact = () => {
       const contract = new ethers.Contract(contractAddress, ABI, signer);
 
       if (player === "player1") {
-        await contract.j1Timeout({ gasLimit: "300000" });
+        const tx = await contract.j1Timeout({ gasLimit: "300000" });
+
+        await tx.wait();
       } else {
-        await contract.j2Timeout({ gasLimit: "300000" });
+        const tx = await contract.j2Timeout({ gasLimit: "300000" });
+
+        await tx.wait();
       }
     } catch (error) {
       console.error("error: ", error);

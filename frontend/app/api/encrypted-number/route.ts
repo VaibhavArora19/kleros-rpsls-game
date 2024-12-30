@@ -1,7 +1,6 @@
 import { Redis } from "@upstash/redis";
-import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET() {
   const redis = new Redis({
     url: process.env.UPSTASH_REDIS_REST_URL,
     token: process.env.UPSTASH_REDIS_REST_TOKEN,

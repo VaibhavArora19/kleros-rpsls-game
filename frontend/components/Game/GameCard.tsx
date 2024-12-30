@@ -12,6 +12,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { FaQuestion } from "react-icons/fa";
 import { useDeleteSmartContractAddress } from "@/hooks/server/contract";
 import { TiTick } from "react-icons/ti";
+import { useRouter } from "next/navigation";
 
 type TProps = {
   contractAddress: string;
@@ -34,12 +35,13 @@ const GameCard = (props: TProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [gameStatus, setGameStatus] = useState<Status | null>(null);
   const { mutateAsync } = useDeleteSmartContractAddress();
+  const router = useRouter();
 
   useEffect(() => {
     async function getStatus() {
       if (!address) return;
 
-      const { status, message } = (await checkStatus(props.contractAddress)) as { status: Status; message: String };
+      const { status, message } = (await checkStatus(props.contractAddress)) as { status: Status; message: string };
 
       if (status === undefined || status === null || !message) return;
 
@@ -87,6 +89,7 @@ const GameCard = (props: TProps) => {
         case Status.GAME_ENDED:
           await mutateAsync();
           toast.success("Game ended!");
+          router.refresh();
       }
 
       setIsLoading(false);
