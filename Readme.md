@@ -62,3 +62,8 @@ There are some timeouts for both the players and if they didn't submit their mov
 To end the game click on restart game and then the game will be ended and you can play the new game again.
 </li>
 </ol>
+
+<br/>
+<br />
+
+<h2 align="center">Please remember that you have to refresh the page after each transaction for the changes to occur.</h2>
